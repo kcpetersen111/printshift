@@ -32,7 +32,11 @@ func NewServer(db *sql.DB) Server {
 func (s *Server) register() error {
 
 	s.ginServer.GET("ping", s.ping)
-	s.ginServer.POST("create_user", s.createUser)
+	s.ginServer.GET("login", s.login)
+
+	proc := s.ginServer.Group("/protected")
+
+	proc.POST("create_user", s.createUser)
 
 	s.ginServer.Use(authMiddleware())
 	return nil
