@@ -14,13 +14,15 @@ Students are assigned to classes - 1 printer per clsas
 
 # API Spec
 
-CreateUser 
+CreateUser:
+```
 {
   "Name": String,
   "AccessLevel": Int(enum),
   "Email": String,
   "Classes": String[]
 }
+```
 GetUser
 
 UpdateUser
