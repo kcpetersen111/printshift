@@ -11,3 +11,18 @@ Scheduler modes:
 Name and desc for each printer
 
 Students are assigned to classes - 1 printer per clsas
+
+# API Spec
+
+CreateUser 
+{
+  "Name": String,
+  "AccessLevel": Int(enum),
+  "Email": String,
+  "Classes": String[]
+}
+GetUser
+
+UpdateUser
+
+DeleteUser
