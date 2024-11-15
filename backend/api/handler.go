@@ -82,9 +82,10 @@ func (s *Server) createUser(c *gin.Context) {
 	name := gjson.GetBytes(req, "name").String()
 	level := gjson.GetBytes(req, "access_level").Int()
 	email := gjson.GetBytes(req, "email").String()
+	password := gjson.GetBytes(req, "password").String()
 	id := uuid.New().String()
 
-	_, err = s.db.Exec("Insert into users values (?, ?, ?, ?, ?);", id, email, name, level)
+	_, err = s.db.Exec("Insert into users values (?, ?, ?, ?, ?);", id, email, name, level, password)
 	if err != nil {
 		slog.Error("error inserting into db: %v", err)
 		c.JSON(http.StatusBadRequest, mustSet("", "error", "error inserting new user to db"))
