@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"log"
 	"log/slog"
+	"os"
 
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
@@ -37,8 +39,12 @@ func setupTables(db *sql.DB) {
 }
 
 func NewDB() *sql.DB {
+	godotenv.Load()
+
+	host := os.Getenv("DB_HOST")
+
 	// Define the connection string (replace with your own database credentials)
-	connStr := "user=user dbname=printshift password=secret host=localhost port=5432 sslmode=disable"
+	connStr := fmt.Sprintf("user=user dbname=printshift password=secret host=%s port=5432 sslmode=disable", host)
 
 	// Open a connection to the database
 	db, err := sql.Open("postgres", connStr)

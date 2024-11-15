@@ -1,6 +1,5 @@
 services:
   backend:
-    container_name: backend
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -8,11 +7,12 @@ services:
       - "3410:3410"
     depends_on:
       - postgres
+    environment:
+      DB_HOST: postgres
     networks:
       - ben-didnt-tell-me-a-good-name
 
   postgres:
-    container_name: postgres
     image: postgres:16.3
     ports:
       - "5432:5432"
