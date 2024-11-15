@@ -34,7 +34,7 @@ func (s *Server) Start() error {
 	if s.ginServer == nil {
 		return fmt.Errorf("server does not exist")
 	}
-	return s.ginServer.Run()
+	return s.ginServer.Run("0.0.0.0:3410")
 }
 
 func mustSet(json, key string, value interface{}) string {
