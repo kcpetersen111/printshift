@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
 )
@@ -16,7 +17,8 @@ func (s *Server) ping(c *gin.Context) {
 }
 
 func (s *Server) createUser(c *gin.Context) {
-	auth, _ := c.Get("username")
+	// add user auth stuff later
+	// auth, _ := c.Get("username")
 
 	req, err := io.ReadAll(c.Request.Body)
 	if err != nil {
@@ -28,10 +30,15 @@ func (s *Server) createUser(c *gin.Context) {
 	name := gjson.GetBytes(req, "name").String()
 	level := gjson.GetBytes(req, "access_level").Int()
 	email := gjson.GetBytes(req, "email").String()
-	classes := make([]string, 0)
-	gjson.GetBytes(req, "classes").ForEach(func(key, value gjson.Result) bool {
-		classes = append(classes, value.String())
-		return true
-	})
+	id := uuid.New().String()
+
+	_, err = s.db.Exec("Insert into users values (?, ?, ?, ?, ?);", id, email, name, level)
+	if err != nil {
+		slog.Error("error inserting into db: %v", err)
+		c.JSON(http.StatusBadRequest, mustSet("", "error", "error inserting new user to db"))
+		return
+	}
+	slog.Info("successfully created user: %v", email)
+	c.JSON(http.StatusCreated, "")
 
 }

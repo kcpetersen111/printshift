@@ -11,26 +11,29 @@ import (
 
 func setupTables(db *sql.DB) {
 	_, err := db.Exec(`
-		create table if not exists test (
-			test TEXT
-		);`,
-	)
-	if err != nil {
-		panic(fmt.Sprintf("error creating test table: %v", err))
-	}
-	_, err = db.Exec(`
 		create table if not exists users (
 			userId text not null,
 			email text not null,
 			name text,
-			classes text[],
-			printers text[],
-			printersCanAssign int
+			accessLevel int
 		);`,
 	)
 	if err != nil {
 		panic(fmt.Sprintf("error creating test table: %v", err))
 	}
+
+	// _, err = db.Exec(`
+	// 	create table if not exists classes (
+	// 		classId string,
+	// 		professor string,
+	// 		name string,
+
+	// 	);`,
+	// )
+	// if err != nil {
+	// 	panic(fmt.Sprintf("error creating test table: %v", err))
+	// }
+
 }
 
 func NewDB() *sql.DB {
