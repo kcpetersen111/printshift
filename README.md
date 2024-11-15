@@ -20,7 +20,7 @@ CreateUser:
 ```
 {
   "name": String,
-  "access/_level": Int(enum),
+  "access\_level": Int(enum),
   "email": String,
   "classes": String[]
 }
@@ -35,11 +35,11 @@ User:
 ```
 {
     name: string,
-    access/_level: AccessLevel,
+    access\_level: AccessLevel,
     email: string,
     classes: string[],
     printers: string[],
-    printers/_an/_assign: number
+    printers\_an\_assign: number
 }
 ```
 
