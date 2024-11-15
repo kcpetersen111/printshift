@@ -1,6 +1,7 @@
 package api
 
 import (
+	"database/sql"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
@@ -9,13 +10,15 @@ import (
 
 type Server struct {
 	ginServer *gin.Engine
+	db        *sql.DB
 }
 
-func NewServer() Server {
+func NewServer(db *sql.DB) Server {
 	gs := gin.Default()
 
 	s := Server{
 		ginServer: gs,
+		db:        db,
 	}
 	s.register()
 	return s

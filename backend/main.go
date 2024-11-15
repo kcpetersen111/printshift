@@ -10,7 +10,7 @@ func main() {
 	db := persist.NewDB()
 	defer db.Close()
 
-	s := api.NewServer()
+	s := api.NewServer(db)
 	if err := s.Start(); err != nil {
 		log.Fatalf("error running server: %v", err)
 	}
