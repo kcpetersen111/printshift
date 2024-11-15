@@ -1,4 +1,6 @@
-import { useState } from "react";
+"use client";
+
+import { useEffect, useState } from "react";
 import { AddChoice } from "./AddChoice";
 import { User } from "../lib/models/User";
 import { AccessLevel } from "../lib/enums/AccessLevel";
@@ -16,6 +18,10 @@ export const CreateUserModal = ({hidden}: CreateUserModalProps) => {
     const [printers, setPrinters] = useState<string[]>([]);
     const [printersCanAssign, setPrintersCanAssign] = useState(-1);
     const [isHidden, setIsHidden] = useState(hidden);
+
+    useEffect(() => {
+        setIsHidden(hidden);
+    }, [hidden]);
 
     const convertToDbAccessLevel = (accessLevel: string): AccessLevel => {
         switch (accessLevel) {
@@ -45,29 +51,37 @@ export const CreateUserModal = ({hidden}: CreateUserModalProps) => {
     }
 
     return (
-        <div hidden={isHidden}>
-            <label>First Name:</label>
-            <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+        <div hidden={isHidden} className={"h-full w-full bg-black bg-opacity-50 flex flex-col"}>
+            <div>
+                <label>First Name:</label>
+                <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+            </div>
+            <div>
+                <label>Last Name:</label>
+                <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} />
+            </div>
+            <div>
+                <label>Email:</label>
+                <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} />
+            </div>
+            <div>
+                <label>Professor or Student?</label>
+                <input type="text" value={accessLevel} onChange={(e) => setAccessLevel(e.target.value)} />
+            </div>
+            <div>
+                <label>Enter classes:</label>
+                <AddChoice onChange={(classList: string[]) => setClasses(classList)} selections={classes} />
+            </div>
+            <div>
+                <label>Enter printer ids:</label>
+                <AddChoice onChange={(printerList: string[]) => setPrinters(printerList)} selections={printers} />
+            </div>
+            <div>
+                <label># of printers allowed to manage</label>
+                <input type="number" value={printersCanAssign} onChange={(e) => setPrintersCanAssign(e.target.valueAsNumber)} />
+            </div>
 
-            <label>Last Name:</label>
-            <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} />
-
-            <label>Email:</label>
-            <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} />
-
-            <label>Professor or Student?</label>
-            <input type="text" value={accessLevel} onChange={(e) => setAccessLevel(e.target.value)} />
-
-            <label>Enter classes:</label>
-            <AddChoice onChange={(classList: string[]) => setClasses(classList)} selections={classes} />
-
-            <label>Enter printer ids:</label>
-            <AddChoice onChange={(printerList: string[]) => setPrinters(printerList)} selections={printers} />
-
-            <label># of printers allowed to manage</label>
-            <input type="number" value={printersCanAssign} onChange={(e) => setPrintersCanAssign(e.target.valueAsNumber)} />
-
-            <button>Submit</button>
+            <button onClick={() => onSubmit()}>Submit</button>
         </div>
     );
 }

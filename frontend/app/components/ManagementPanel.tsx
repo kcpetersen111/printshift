@@ -21,8 +21,8 @@ export const ManagementPanel = ({user}: ManagementPanelProps) => {
     }
 
     return (
-        <div>
-            <h1>{convertToStringAccessLevel(user.accessLevel)} Panel</h1>
+        <div className="w-fit">
+            <h1 className="text-8xl mt-10">{convertToStringAccessLevel(user.accessLevel)} Panel</h1>
             <AdminPanel user={user} />
         </div>
     );
