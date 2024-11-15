@@ -30,7 +30,7 @@ func (s *Server) login(c *gin.Context) {
 	email := gjson.GetBytes(req, "email").String()
 	pass := gjson.GetBytes(req, "password").String()
 
-	rows, err := s.db.Query("select password from users where email = ?;", email)
+	rows, err := s.db.Query("select password from users where email = $1;", email)
 	if err != nil {
 		slog.Error("error querying db: %v", err)
 		c.JSON(http.StatusBadRequest, mustSet("", "call_failed", "True"))
@@ -85,7 +85,7 @@ func (s *Server) createUser(c *gin.Context) {
 	password := gjson.GetBytes(req, "password").String()
 	id := uuid.New().String()
 
-	_, err = s.db.Exec("Insert into users values (?, ?, ?, ?, ?);", id, email, name, level, password)
+	_, err = s.db.Exec("Insert into users values ($1, $2, $3, $4, $5);", id, email, name, level, password)
 	if err != nil {
 		slog.Error("error inserting into db: %v", err)
 		c.JSON(http.StatusBadRequest, mustSet("", "error", "error inserting new user to db"))

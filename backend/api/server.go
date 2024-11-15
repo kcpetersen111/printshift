@@ -38,7 +38,7 @@ func (s *Server) register() error {
 
 	proc.POST("create_user", s.createUser)
 
-	s.ginServer.Use(authMiddleware())
+	proc.Use(authMiddleware())
 	return nil
 }
 
