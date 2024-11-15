@@ -30,6 +30,14 @@ GetUser
 UpdateUser
 
 DeleteUser
+
+Login: 
+```
+{
+  "email": String,
+  "password": String
+}
+```
 ## Models
 User:
 ```
