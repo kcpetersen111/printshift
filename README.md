@@ -1,6 +1,7 @@
 "Requirments":
 
 Admin account - Creates other professor accounts. This goes to Dr. Dave
+
 Professor accounts can assign students to printers
 
 Scheduler modes:
