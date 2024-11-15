@@ -19,10 +19,10 @@ Students are assigned to classes - 1 printer per clsas
 CreateUser:
 ```
 {
-  "Name": String,
-  "AccessLevel": Int(enum),
-  "Email": String,
-  "Classes": String[]
+  "name": String,
+  "access_level": Int(enum),
+  "email": String,
+  "classes": String[]
 }
 ```
 GetUser
@@ -35,11 +35,11 @@ User:
 ```
 {
     name: string,
-    accessLevel: AccessLevel,
+    access_level: AccessLevel,
     email: string,
     classes: string[],
     printers: string[],
-    printersCanAssign: number
+    printers_an_assign: number
 }
 ```
 
