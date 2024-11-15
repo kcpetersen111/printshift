@@ -39,7 +39,7 @@ User:
     email: string,
     classes: string[],
     printers: string[],
-    printers_an_assign: number
+    printers_can_assign: number
 }
 ```
 

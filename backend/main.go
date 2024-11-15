@@ -2,18 +2,15 @@ package main
 
 import (
 	"backend/api"
+	"backend/persist"
 	"log"
 )
 
 func main() {
+	db := persist.NewDB()
+	defer db.Close()
 
-	// server := gin.Default()
-	// server.GET("/ping", func(ctx *gin.Context) {
-	// 	j, _ := sjson.Set("", "ping", "pong")
-	// 	ctx.JSON(http.StatusOK, j)
-	// })
-	// server.Run()
-	s := api.NewServer()
+	s := api.NewServer(db)
 	if err := s.Start(); err != nil {
 		log.Fatalf("error running server: %v", err)
 	}
