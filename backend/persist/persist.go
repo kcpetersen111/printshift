@@ -14,14 +14,25 @@ import (
 func setupTables(db *sql.DB) {
 	_, err := db.Exec(`
 		create table if not exists users (
-			userId text not null,
+			id integer autoincrement primary key,
 			email text not null,
 			name text,
-			accessLevel int
+			accessLevel integer not null default 1,
+			password text not null,
+			unique(email)
 		);`,
 	)
 	if err != nil {
 		panic(fmt.Sprintf("error creating test table: %v", err))
+	}
+	//seed a user should remove if ever really hosted
+	email := "email"
+	name := "name"
+	level := 1
+	password := "password"
+	_, err = db.Exec(`Insert into users values ($1, $2, $3, $4);`, email, name, level, password)
+	if err != nil {
+		panic(fmt.Sprintf("error inserting into db: %v", err))
 	}
 
 	// _, err = db.Exec(`
