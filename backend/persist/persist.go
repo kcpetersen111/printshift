@@ -18,6 +18,19 @@ func setupTables(db *sql.DB) {
 	if err != nil {
 		panic(fmt.Sprintf("error creating test table: %v", err))
 	}
+	_, err = db.Exec(`
+		create table if not exists users (
+			userId text not null,
+			email text not null,
+			name text,
+			classes text[],
+			printers text[],
+			printersCanAssign int
+		);`,
+	)
+	if err != nil {
+		panic(fmt.Sprintf("error creating test table: %v", err))
+	}
 }
 
 func NewDB() *sql.DB {
