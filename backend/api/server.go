@@ -11,13 +11,24 @@ type Server struct {
 }
 
 func NewServer() Server {
-	s := gin.Default()
-	return Server{
-		ginServer: s,
+	gs := gin.Default()
+
+	s := Server{
+		ginServer: gs,
 	}
+	s.register()
+	return s
 }
 
-func (s Server) Start() error {
+// to register a new http call add the path and function here
+func (s *Server) register() error {
+
+	s.ginServer.GET("ping", s.ping)
+
+	return nil
+}
+
+func (s *Server) Start() error {
 	if s.ginServer == nil {
 		return fmt.Errorf("server does not exist")
 	}
