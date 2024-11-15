@@ -14,6 +14,8 @@ Students are assigned to classes - 1 printer per clsas
 
 # API Spec
 
+## Endpoints
+
 CreateUser:
 ```
 {
@@ -28,9 +30,20 @@ GetUser
 UpdateUser
 
 DeleteUser
+## Models
+User:
+```
+{
+    name: string,
+    accessLevel: AccessLevel,
+    email: string,
+    classes: string[],
+    printers: string[],
+    printersCanAssign: number
+}
+```
 
-### Enums
-
+## Enums
 AccessLevel:
 ```
 {
