@@ -30,6 +30,14 @@ GetUser
 UpdateUser
 
 DeleteUser
+
+Login: 
+```
+{
+  "email": String,
+  "password": String
+}
+```
 ## Models
 User:
 ```
@@ -39,7 +47,7 @@ User:
     email: string,
     classes: string[],
     printers: string[],
-    printers_an_assign: number
+    printers_can_assign: number
 }
 ```
 
@@ -47,6 +55,7 @@ User:
 AccessLevel:
 ```
 {
+    Unknown = 0,
     Admin = 1,
     Professor = 2,
     Student = 3
