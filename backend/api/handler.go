@@ -8,7 +8,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
-	"github.com/google/uuid"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
 )
@@ -83,9 +82,8 @@ func (s *Server) createUser(c *gin.Context) {
 	level := gjson.GetBytes(req, "access_level").Int()
 	email := gjson.GetBytes(req, "email").String()
 	password := gjson.GetBytes(req, "password").String()
-	id := uuid.New().String()
 
-	_, err = s.db.Exec("Insert into users values ($1, $2, $3, $4, $5);", id, email, name, level, password)
+	_, err = s.db.Exec("Insert into users values ($1, $2, $3, $4);", email, name, level, password)
 	if err != nil {
 		slog.Error("error inserting into db: %v", err)
 		c.JSON(http.StatusBadRequest, mustSet("", "error", "error inserting new user to db"))
