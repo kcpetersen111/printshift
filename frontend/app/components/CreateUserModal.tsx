@@ -43,13 +43,10 @@ export const CreateUserModal = ({hidden, setIsHidden}: CreateUserModalProps) => 
             password: "password"
         };
 
-        // TODO: API Call CreateUser
-        const createUserResponse = fetch("http://localhost:3410/protected/create_user", {
+        fetch("http://localhost:3410/protected/create_user", {
             method: "POST",
             body: JSON.stringify(user)
         });
-
-        console.log(createUserResponse);
 
         setIsHidden(false);
     }
