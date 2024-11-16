@@ -53,7 +53,7 @@ export const SchedulePrinter = ({isOpen, setIsOpen, setTitle}: SchedulePrinterPr
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        setTitle(formData.classId.toString() + "-" + formData.printerId.toString());
+        setTitle("Class:" + formData.classId.toString() + "-" + "Printer:" + formData.printerId.toString());
 
         toggleModal();
     };
