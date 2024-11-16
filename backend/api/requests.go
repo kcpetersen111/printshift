@@ -20,6 +20,11 @@ type UserLoginResponse struct {
 	Email       string `json:"email"`
 }
 
+type Professor struct {
+	ProfessorId string `json:"professorId"`
+	Name        string `json:"name"`
+}
+
 type UserLogin struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
@@ -44,6 +49,7 @@ type CreateClassesRequest struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	IsActive    bool   `json:"isActive"`
+	ProfessorId int    `json:"professorId"`
 }
 
 type UpdateClass struct {

@@ -56,6 +56,28 @@ func (s *Server) updateUser(c *gin.Context) {
 	c.JSON(http.StatusAccepted, "OK")
 }
 
+func (s *Server) listProfessors(c *gin.Context) {
+	rows, err := s.db.Query(`select id, name from users where access_level = 2;`)
+	if err != nil {
+		slog.Error("error querying db: %v", err)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err})
+		return
+	}
+
+	professors := make([]Professor, 0)
+	for rows.Next() {
+		var p Professor
+		if err := rows.Scan(&p.ProfessorId, &p.Name); err != nil {
+			slog.Error("error scanning db: %v", err)
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err})
+			return
+		}
+		professors = append(professors, p)
+	}
+
+	c.JSON(http.StatusOK, professors)
+}
+
 func (s *Server) listUsers(c *gin.Context) {
 	rows, err := s.db.Query(`select id, email, name, access_level from users;`)
 	if err != nil {
