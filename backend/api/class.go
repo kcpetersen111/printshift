@@ -12,7 +12,7 @@ func (s *Server) listClasses(c *gin.Context) {
 	if err != nil {
 		slog.Error("error querying db: %v", err)
 
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
 	}
 	classes := make([]Class, 0)
@@ -21,7 +21,7 @@ func (s *Server) listClasses(c *gin.Context) {
 		if err := rows.Scan(&cl.Id, &cl.Name, &cl.Description, &cl.IsActive); err != nil {
 			slog.Error("error scanning db: %v", err)
 
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err})
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err})
 			return
 		}
 
@@ -37,24 +37,24 @@ func (s *Server) updateClass(c *gin.Context) {
 	if err := c.BindJSON(&requestBody); err != nil {
 		slog.Error("error reading request body: %v", err)
 
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
 	}
 
 	_, err := s.db.Exec("update classes set name = $1, description = $2, is_active = $3 where id = $4",
-		requestBody.Class.Name,
-		requestBody.Class.Description,
-		requestBody.Class.IsActive,
+		requestBody.Name,
+		requestBody.Description,
+		requestBody.IsActive,
 		requestBody.ClassId,
 	)
 	if err != nil {
 		slog.Error("error inserting class into db: %v", err)
 
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
 	}
 
-	c.JSON(http.StatusCreated, "OK")
+	c.JSON(http.StatusAccepted, "OK")
 }
 
 func (s *Server) createClass(c *gin.Context) {
@@ -63,7 +63,7 @@ func (s *Server) createClass(c *gin.Context) {
 	if err := c.BindJSON(&requestBody); err != nil {
 		slog.Error("error reading request body: %v", err)
 
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
 	}
 
@@ -71,7 +71,7 @@ func (s *Server) createClass(c *gin.Context) {
 	if err != nil {
 		slog.Error("error inserting class into db: %v", err)
 
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
 	}
 

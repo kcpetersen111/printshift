@@ -47,30 +47,32 @@ type CreateClassesRequest struct {
 }
 
 type UpdateClass struct {
-	ClassId string               `json:"classId"`
-	Class   CreateClassesRequest `json:"class"`
+	ClassId     int    `json:"classId"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	IsActive    bool   `json:"isActive"`
 }
 
 type AddUserToClass struct {
-	UserId  string `json:"userId"`
-	ClassId int    `json:"classId"`
+	UserId  int `json:"userId"`
+	ClassId int `json:"classId"`
 }
 
 type RemoveUserFromClass struct {
-	UserId  string `json:"userId"`
-	ClassId int    `json:"classId"`
+	UserId  int `json:"userId"`
+	ClassId int `json:"classId"`
 }
 
 type AddPrinterTime struct {
-	PrinterId  string `json:"printerId"`
-	TimeslotId int    `json:"timeslotId"`
+	PrinterId  int `json:"printerId"`
+	TimeslotId int `json:"timeslotId"`
 }
 
 type BookPrinter struct {
-	UserId    string `json:"userId"`
-	StartTime int    `json:"startTime"`
-	EndTime   int    `json:"endTime"`
-	PrinterId int    `json:"printerId"`
+	UserId    int `json:"userId"`
+	StartTime int `json:"startTime"`
+	EndTime   int `json:"endTime"`
+	PrinterId int `json:"printerId"`
 }
 
 type CreateAvailableTime struct {
