@@ -46,7 +46,7 @@ func (s *Server) updateUser(c *gin.Context) {
 		return
 	}
 
-	_, err := s.db.Exec("update users set email = $1, name = $2, password = $3;", req.Email, req.Name, req.Password)
+	_, err := s.db.Exec("update users set email = $1, name = $2, password = $3 where email = $4;", req.Email, req.Name, req.Password, req.Email)
 	if err != nil {
 		slog.Error("error inserting into db: %v", err)
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err})
