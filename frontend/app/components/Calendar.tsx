@@ -92,7 +92,7 @@ const CalendarComponent: React.FC = () => {
           selectable
           onSelectSlot={handleSelectSlot}
           style={{ height: "80vh" }}
-          className="custom-calendar"
+          className="custom-calendar dark:text-gray-800"
         />
         <SchedulePrinter isOpen={isOpen} setIsOpen={setIsOpen} setTitle={setTitle} />
       </div>

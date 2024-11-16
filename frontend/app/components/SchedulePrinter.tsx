@@ -15,8 +15,8 @@ type SchedulePrinterRequest = {
 
 export const SchedulePrinter = ({isOpen, setIsOpen, setTitle}: SchedulePrinterProps) => {
     const emptyScheduledPrinter: SchedulePrinterRequest = {
-        printerId: -1,
-        classId: -1
+        printerId: 1,
+        classId: 1
     }
 
     const [formData, setFormData] = useState<SchedulePrinterRequest>(emptyScheduledPrinter);
