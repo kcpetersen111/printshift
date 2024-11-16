@@ -110,7 +110,7 @@ export const CreateClassModal = ({isOpen, setIsOpen}: CreateClassModalProps) => 
                                     name="professorId"
                                     value={formData.professorId}
                                     onChange={handleChange}
-                                    className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                                    className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                                 >
                                     {professors.map((item, key) => (
                                         <option value={item.professorId} key={key}>{item.name}</option>
