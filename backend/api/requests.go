@@ -60,6 +60,10 @@ type UpdateClass struct {
 	IsActive    bool   `json:"isActive"`
 }
 
+type ListClassesRequest struct {
+	UserId int `json:"userId"`
+}
+
 type AddUserToClass struct {
 	UserId  int `json:"userId"`
 	ClassId int `json:"classId"`
