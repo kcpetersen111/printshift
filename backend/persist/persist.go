@@ -14,11 +14,11 @@ import (
 func setupTables(db *sql.DB) {
 	_, err := db.Exec(`
 		create table if not exists users (
-			id integer autoincrement primary key,
-			email text not null,
-			name text,
+			id serial primary key,
+			email varchar(255) not null,
+			name varchar(255),
 			accessLevel integer not null default 1,
-			password text not null,
+			password varchar(255) not null,
 			unique(email)
 		);`,
 	)
@@ -26,13 +26,33 @@ func setupTables(db *sql.DB) {
 		panic(fmt.Sprintf("error creating test table: %v", err))
 	}
 	//seed a user should remove if ever really hosted
-	email := "email"
+	email := "test@email.com"
 	name := "name"
 	level := 1
 	password := "password"
-	_, err = db.Exec(`Insert into users values ($1, $2, $3, $4);`, email, name, level, password)
-	if err != nil {
-		panic(fmt.Sprintf("error inserting into db: %v", err))
+
+	row := db.QueryRow(`select id from users where email = ($1);`, email)
+
+	var user struct {
+		Id          int
+		Email       string
+		Name        string
+		AccessLevel int
+		Password    string
+	}
+
+	switch err := row.Scan(&user.Id); err {
+	case sql.ErrNoRows:
+		_, err = db.Exec(`Insert into users (email, name, accessLevel, password) values ($1, $2, $3, $4);`, email, name, level, password)
+		if err != nil {
+			panic(fmt.Sprintf("error inserting into db: %v", err))
+		}
+		// return 0, sql.ErrNoRows
+		// fmt.Println("No rows were returned!")
+	case nil:
+		break
+	default:
+		panic(err)
 	}
 
 	// _, err = db.Exec(`
