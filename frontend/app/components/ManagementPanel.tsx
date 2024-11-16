@@ -10,8 +10,8 @@ type ManagementPanelProps = {
 export const ManagementPanel = ({user}: ManagementPanelProps) => {
 
     return (
-        <div className="w-fit">
-            <h1 className="text-8xl mt-10">{convertToStringAccessLevel(user.accessLevel)} Panel</h1>
+        <div className="w-8/12">
+            <h1 className="text-6xl mt-10 text-center">{convertToStringAccessLevel(user.accessLevel)} Panel</h1>
             <AdminPanel user={user} />
             <ProfessorPanel user={user} />
         </div>
