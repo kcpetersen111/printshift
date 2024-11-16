@@ -1,10 +1,16 @@
 package api
 
 type CreateUserRequest struct {
-	Name     string `json:"name"`
-	Level    int    `json:"level"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Name        string `json:"name"`
+	AccessLevel int    `json:"accessLevel"`
+	Email       string `json:"email"`
+	Password    string `json:"password"`
+}
+
+type UserLoginResponse struct {
+	Name        string `json:"name"`
+	AccessLevel int    `json:"accessLevel"`
+	Email       string `json:"email"`
 }
 
 type UserLogin struct {
@@ -14,12 +20,12 @@ type UserLogin struct {
 
 type AddPrinterToClass struct {
 	ClassId   int `json:"name"`
-	PrinterId int `json:"active"`
+	PrinterId int `json:"printerId"`
 }
 
 type CreatePrinterRequest struct {
-	Name   string `json:"name"`
-	Active bool   `json:"active"`
+	Name     string `json:"name"`
+	IsActive bool   `json:"isActive"`
 }
 
 type UpdatePrinter struct {
@@ -30,7 +36,7 @@ type UpdatePrinter struct {
 type CreateClassesRequest struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
-	Active      bool   `json:"active"`
+	IsActive    bool   `json:"isActive"`
 }
 
 type UpdateClass struct {
@@ -64,4 +70,10 @@ type CreateAvailableTime struct {
 	StartTime int `json:"startTime"`
 	EndTime   int `json:"endTime"`
 	ClassId   int `json:"classId"`
+}
+
+type Class struct {
+	Id       string `json:"id"`
+	Name     string `json:"name"`
+	IsActive string `json:"isActive"`
 }

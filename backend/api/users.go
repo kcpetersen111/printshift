@@ -19,7 +19,7 @@ func (s *Server) createUser(c *gin.Context) {
 		return
 	}
 
-	_, err := s.db.Exec("Insert into users (email, name, access_level, password) values ($1, $2, $3, $4);", req.Email, req.Name, req.Level, req.Password)
+	_, err := s.db.Exec("Insert into users (email, name, access_level, password) values ($1, $2, $3, $4);", req.Email, req.Name, req.AccessLevel, req.Password)
 	if err != nil {
 		slog.Error("error inserting into db: %v", err)
 		c.JSON(http.StatusBadRequest, mustSet("", "error", "error inserting new user to db"))
