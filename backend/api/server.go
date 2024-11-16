@@ -44,7 +44,10 @@ func (s *Server) register() error {
 
 	s.ginServer.GET("ping", s.ping)
 	s.ginServer.GET("login", s.login)
+
+	// todo protect these
 	s.ginServer.POST("printer", s.createPrinter)
+	s.ginServer.POST("classPrinter", s.addPrinterToClass)
 
 	proc := s.ginServer.Group("/protected")
 
