@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { User } from "../lib/models/User";
-import { AccessLevel, convertToStringAccessLevel } from "../lib/enums/AccessLevel";
+import { AccessLevel } from "../lib/enums/AccessLevel";
 
 type CreateUserModalProps = {
     isOpen: boolean,
@@ -24,7 +24,13 @@ export const CreateUserModal = ({isOpen, setIsOpen, access}: CreateUserModalProp
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
+        if (Number.parseInt(value)) {
+            const accessValue = Number.parseInt(value) as AccessLevel;
+            setFormData((prev) => ({ ...prev, [name]: accessValue }));
+            console.log(value);
+        } else {
+            setFormData((prev) => ({ ...prev, [name]: value }));
+        }
     };
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -101,20 +107,20 @@ export const CreateUserModal = ({isOpen, setIsOpen, access}: CreateUserModalProp
 
                             <div className="mb-4">
                                 <label
-                                    htmlFor="role"
+                                    htmlFor="accessLevel"
                                     className="block text-sm font-medium text-gray-700"
                                 >
                                     Role
                                 </label>
                                 <select
-                                    id="role"
-                                    name="role"
-                                    value={formData.accessLevel && convertToStringAccessLevel(formData.accessLevel)}
+                                    id="accessLevel"
+                                    name="accessLevel"
+                                    value={formData.accessLevel}
                                     onChange={handleChange}
                                     className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                                 >
-                                    {access === AccessLevel.Admin && <option value="Professor">Professor</option>}
-                                    <option value="Student">Student</option>
+                                    {access === AccessLevel.Admin && <option value={AccessLevel.Professor}>Professor</option>}
+                                    <option value={AccessLevel.Student}>Student</option>
                                 </select>
                             </div>
 
