@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ManagementPanel } from "./components/ManagementPanel";
 import { User } from "./lib/models/User";
 import { LoginRequest } from "./lib/models/LoginRequest";
+import { Navbar } from "./components/Navbar";
 
 export default function Home() {
     const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -28,6 +29,7 @@ export default function Home() {
 
     return (
         <div className="flex flex-col items-center">
+            {currentUser !== null && <Navbar />}
             <h1 hidden={currentUser !== null} className="text-4xl mb-6">Login</h1>
 
             {/* User Creation Form */}
