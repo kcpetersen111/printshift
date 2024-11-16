@@ -2,7 +2,6 @@ package api
 
 import (
 	"backend/persist"
-	"io"
 	"log/slog"
 	"net/http"
 	"time"
@@ -19,41 +18,35 @@ func (s *Server) ping(c *gin.Context) {
 
 // do better user auth not unencrypted password comparison
 func (s *Server) login(c *gin.Context) {
-	// req, err := io.ReadAll(c.Request.Body)
-	// if err != nil {
-	// 	slog.Error("error reading request body: %v", err)
-	// 	c.JSON(http.StatusBadRequest, mustSet("", "call_failed", "True"))
-	// 	return
-	// }
-	// email := gjson.GetBytes(req, "email").String()
-	// pass := gjson.GetBytes(req, "password").String()
-
 	var requestBody UserLogin
 
 	if err := c.BindJSON(&requestBody); err != nil {
 		slog.Error("error reading request body: %v", err)
-		c.JSON(http.StatusBadRequest, gin.H{"call_failed": true})
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"call_failed": true})
 		return
 	}
 
-	rows, err := s.db.Query("select password from users where email = $1;", requestBody.Email)
+	var userResponse UserLoginResponse
+
+	rows, err := s.db.Query("select email, name, access_level, password from users where email = $1;", requestBody.Email)
 	if err != nil {
 		slog.Error("error querying db: %v", err)
-		c.JSON(http.StatusBadRequest, mustSet("", "call_failed", "True"))
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"call_failed": true})
 		return
 	}
 	var dbPass string
 	for rows.Next() {
-		if err := rows.Scan(&dbPass); err != nil {
-			slog.Error("error scanning db res: %v", err)
-			c.JSON(http.StatusBadRequest, mustSet("", "call_failed", "True"))
+		if err := rows.Scan(&userResponse.Email, &userResponse.Name, &userResponse.AccessLevel, &dbPass); err != nil {
+			slog.Error("error scanning db: %v", err)
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "can't insert new printer to db"})
 			return
 		}
 	}
+
 	if requestBody.Password == "" || dbPass != requestBody.Password {
 		slog.Error("email %s with password '%s' not found", requestBody.Email, requestBody.Password)
 		time.Sleep(time.Second)
-		c.JSON(http.StatusUnauthorized, "")
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "can't login"})
 		return
 	}
 
@@ -65,13 +58,13 @@ func (s *Server) login(c *gin.Context) {
 
 	tokenString, err := token.SignedString(secretKey)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "could not create token"})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "could not create token"})
 		return
 	}
 
 	// Set the JWT in a cookie.
 	c.SetCookie("auth_token", tokenString, 60*60, "/", "localhost", false, true)
-	c.JSON(http.StatusOK, gin.H{"message": "login successful"})
+	c.JSON(http.StatusOK, userResponse)
 }
 
 // still needs the checks to see if this user can create the level of users
@@ -85,7 +78,7 @@ func (s *Server) createUser(c *gin.Context) {
 		return
 	}
 
-	_, err := s.db.Exec("Insert into users (email, name, access_level, password) values ($1, $2, $3, $4);", req.Email, req.Name, req.Level, req.Password)
+	_, err := s.db.Exec("Insert into users (email, name, access_level, password) values ($1, $2, $3, $4);", req.Email, req.Name, req.AccessLevel, req.Password)
 	if err != nil {
 		slog.Error("error inserting into db: %v", err)
 		c.JSON(http.StatusBadRequest, mustSet("", "error", "error inserting new user to db"))
