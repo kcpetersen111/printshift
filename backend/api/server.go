@@ -49,14 +49,17 @@ func (s *Server) register() error {
 
 	proc.PATCH("update_user", s.updateUser)
 	proc.POST("create_user", s.createUser)
-	proc.POST("addUserToClass", s.addUserToClass)
+	proc.POST("add_user_to_class", s.addUserToClass)
+	proc.DELETE("remove_user_from_class", s.removeUserFromClass)
 
 	proc.POST("printer", s.createPrinter)
 	proc.POST("addPrinterToClass", s.addPrinterToClass)
-	proc.POST("removeUserFromClass", s.removeUserFromClass)
 	proc.POST("bookPrinter", s.bookPrinter)
+	proc.POST("removeUserFromClass", s.removeUserFromClass)
+	proc.POST("bookSpecificPrinter", s.bookSpecificPrinter)
 
-	proc.POST("createAvailableTime", s.createAvailableTime)
+	proc.POST("createAvailableClassTime", s.createAvailableClassTime)
+	proc.POST("createAvailablePrinterTime", s.createAvailablePrinterTime)
 
 	proc.PATCH("class", s.updateClass)
 	proc.POST("class", s.createClass)
@@ -64,6 +67,7 @@ func (s *Server) register() error {
 	proc.GET("list_users", s.listUsers)
 	proc.GET("list_professors", s.listProfessors)
 	proc.GET("list_classes", s.listClasses)
+	proc.POST("list_user_classes", s.listClassesForUser)
 
 	proc.Use(authMiddleware())
 	return nil
