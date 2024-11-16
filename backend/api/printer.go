@@ -127,7 +127,7 @@ func (s *Server) bookSpecificPrinter(c *gin.Context) {
 		return
 	}
 
-	//validate that the time is open
+	//validate that the printer is open
 	rows, err = tx.Query("select count(*) from printer_times where printer_id = $1 and start_time <= $2 and end_time >= $3;", req.PrinterId, req.StartTime, req.EndTime)
 	if err != nil {
 		slog.Error("error query db: %v", err)
@@ -150,6 +150,7 @@ func (s *Server) bookSpecificPrinter(c *gin.Context) {
 		return
 	}
 
+	// check if the class is open
 	rows, err = tx.Query("select count(*) from class_times where printer_id = $1 and start_time <= $2 and end_time >= $3;", req.PrinterId, req.StartTime, req.EndTime)
 	if err != nil {
 		slog.Error("error query db: %v", err)
@@ -172,6 +173,7 @@ func (s *Server) bookSpecificPrinter(c *gin.Context) {
 		return
 	}
 
+	// check if the printer is already booked
 	rows, err = tx.Query("select id from user_bookings where printer_id = $1 and start_time >= $2 and end_time <= $3 and start_time >= $4 and end_time <= $5;", req.PrinterId, req.StartTime, req.StartTime, req.EndTime, req.EndTime)
 	if err != nil {
 		slog.Error("error query db: %v", err)
