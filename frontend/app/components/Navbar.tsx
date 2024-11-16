@@ -7,7 +7,7 @@ export function Navbar() {
             <div className="container mx-auto flex justify-between items-center">
                 <div className="container mx-auto flex justify-between items-center">
                     <h1 className="text-xl font-bold">
-                        <Link href="/home">
+                        <Link href="/">
                         <img 
                             src="printshift-logo.png" 
                             alt="Printshift logo"

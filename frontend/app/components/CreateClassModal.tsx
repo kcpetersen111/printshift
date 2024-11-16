@@ -15,6 +15,7 @@ export const CreateClassModal = ({isOpen, setIsOpen}: CreateClassModalProps) => 
         description: "",
         professorId: -1,
         isActive: true,
+        id: -1
     };
 
     const [formData, setFormData] = useState<Class>(emptyClass);
