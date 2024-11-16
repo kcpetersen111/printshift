@@ -6,6 +6,7 @@ import (
 	"log"
 	"log/slog"
 	"os"
+	"time"
 
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
@@ -73,6 +74,7 @@ func setupTables(db *sql.DB) {
 		create table if not exists classes (
 			id serial primary key,
 			name varchar(255),
+			description varchar(255),
 			is_active boolean,
 			unique(name)
 		);`,
@@ -133,15 +135,25 @@ func NewDB() *sql.DB {
 	// Define the connection string (replace with your own database credentials)
 	connStr := fmt.Sprintf("user=user dbname=printshift password=secret host=%s port=5432 sslmode=disable", host)
 
-	// Open a connection to the database
+	maxTries := 5
+
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		log.Fatal("Error opening database connection: ", err)
 	}
 
-	if err = db.Ping(); err != nil {
-		slog.Error("Error pinging the database: ", err)
-		panic("Error pinging db")
+	for i := 0; i <= maxTries; i++ {
+		err = db.Ping()
+		if err != nil && i == maxTries {
+			slog.Error("Error pinging the database: ", err)
+			panic("Error pinging db")
+		} else if err != nil {
+			slog.Error("couldn't connect to db. Retrying...")
+			time.Sleep(3 * time.Second)
+			continue
+		} else {
+			break
+		}
 	}
 
 	setupTables(db)
