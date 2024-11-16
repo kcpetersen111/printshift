@@ -107,7 +107,7 @@ export const CreateUserModal = ({isOpen, setIsOpen, access}: CreateUserModalProp
                             <div className="mb-4">
                                 <label
                                     htmlFor="accessLevel"
-                                    className="block text-sm font-medium text-gray-700"
+                                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
                                 >
                                     Role
                                 </label>
