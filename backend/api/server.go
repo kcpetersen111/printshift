@@ -50,10 +50,10 @@ func (s *Server) register() error {
 	proc.PATCH("update_user", s.updateUser)
 	proc.POST("create_user", s.createUser)
 	proc.POST("add_user_to_class", s.addUserToClass)
+	proc.DELETE("remove_user_from_class", s.removeUserFromClass)
 
 	proc.POST("printer", s.createPrinter)
 	proc.POST("addPrinterToClass", s.addPrinterToClass)
-	proc.POST("removeUserFromClass", s.removeUserFromClass)
 	proc.POST("bookPrinter", s.bookPrinter)
 
 	proc.POST("createAvailableTime", s.createAvailableTime)

@@ -7,6 +7,27 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func (s *Server) removeUserFromClass(c *gin.Context) {
+	var requestBody RemoveUserFromClass
+
+	if err := c.BindJSON(&requestBody); err != nil {
+		slog.Error("error reading request body: %v", err)
+
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err})
+		return
+	}
+
+	_, err := s.db.Exec("delete from class_users where user_id = $1 and class_id = $2;", requestBody.UserId, requestBody.ClassId)
+	if err != nil {
+		slog.Error("error removing user from class: %v", err)
+
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err})
+		return
+	}
+
+	c.JSON(http.StatusOK, "OK")
+}
+
 func (s *Server) addUserToClass(c *gin.Context) {
 	var requestBody AddUserToClass
 
@@ -70,29 +91,6 @@ func (s *Server) listClassesForUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, classes)
-}
-
-func (s *Server) removeUserFromClass(c *gin.Context) {
-	var requestBody RemoveUserFromClass
-
-	if err := c.BindJSON(&requestBody); err != nil {
-		slog.Error("error reading request body: %v", err)
-		c.JSON(http.StatusBadRequest, gin.H{"call_failed": true})
-		return
-	}
-
-	_, err := s.db.Exec("delete from class_users where class_id = $1 and user_id = $2",
-		requestBody.UserId,
-		requestBody.ClassId,
-	)
-
-	if err != nil {
-		slog.Error("error adding user to class: %v", err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": "can't add user to class"})
-		return
-	}
-
-	c.JSON(http.StatusCreated, "OK")
 }
 
 func (s *Server) addPrinterToClass(c *gin.Context) {
