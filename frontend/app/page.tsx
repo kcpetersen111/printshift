@@ -12,32 +12,31 @@ export default function Home() {
         const newUser: User = {
             name,
             email,
-            accessLevel,
-            classes: [],
-            printers: [],
-            printersCanAssign: 0, // Default value or adjust as needed
+            access_level: accessLevel,
+			password: "abc"
         };
         setUsers([...users, newUser]);
     };
     
     // Creates a test user
     
-	//const user: User = {
-	//	name: "Admin Dummy User",
-	//	accessLevel: AccessLevel.Admin,
-	//	email: "dummy@user.com",
-	//	classes: [],
-	//	printers: [],
-	//	printersCanAssign: 1000
-	//};
+	const user: User = {
+		name: "Admin Dummy User",
+		access_level: AccessLevel.Admin,
+		email: "dummy@user.com",
+		// classes: [],
+		// printers: [],
+		// printersCanAssign: 1000
+		password: "pass"
+	};
     
     //For the admin panel
 
-	//return (
-	//	<div className="flex flex-col items-center">
-	//		<ManagementPanel user={user} />
-	//	</div>
-	//);
+	return (
+		<div className="flex flex-col items-center">
+			<ManagementPanel user={user} />
+		</div>
+	);
 
     return (
         <div className="flex flex-col items-center">

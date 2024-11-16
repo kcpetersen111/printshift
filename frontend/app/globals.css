@@ -5,12 +5,14 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --button-text: #171717;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --background: #1F2020;
     --foreground: #ededed;
+    --button-text: #1F2020;
   }
 }
 
@@ -22,4 +24,8 @@ body {
 
 [hidden]{
   display: none;
+}
+
+button {
+  color: var(--button-text);
 }
