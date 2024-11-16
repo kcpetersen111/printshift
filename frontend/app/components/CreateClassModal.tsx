@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Class } from "../lib/models/Class";
+import { User } from "../lib/models/User";
 
 type CreateClassModalProps = {
     isOpen: boolean,
@@ -17,6 +18,13 @@ export const CreateClassModal = ({isOpen, setIsOpen}: CreateClassModalProps) => 
     };
 
     const [formData, setFormData] = useState<Class>(emptyClass);
+    const [professors, setProfessors] = useState<User[]>([]);
+
+    useEffect(() => {
+        
+    }, [])
+
+
 
     const toggleModal = () => setIsOpen(!isOpen);
 
@@ -78,6 +86,17 @@ export const CreateClassModal = ({isOpen, setIsOpen}: CreateClassModalProps) => 
                                     required
                                 />
                             </div>
+                            <select
+                                id="role"
+                                name="role"
+                                value={}
+                                onChange={handleChange}
+                                className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                            >
+                                {}
+                                <option value="Professor">Professor</option>
+                                <option value="Student">Student</option>
+                            </select>
 
                             <div className="flex justify-end space-x-3">
                                 <button

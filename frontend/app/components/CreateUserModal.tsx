@@ -24,10 +24,9 @@ export const CreateUserModal = ({isOpen, setIsOpen, access}: CreateUserModalProp
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        if (Number.parseInt(value)) {
+        if (name == "accessLevel") {
             const accessValue = Number.parseInt(value) as AccessLevel;
             setFormData((prev) => ({ ...prev, [name]: accessValue }));
-            console.log(value);
         } else {
             setFormData((prev) => ({ ...prev, [name]: value }));
         }
