@@ -49,7 +49,7 @@ func (s *Server) register() error {
 
 	proc.PATCH("update_user", s.updateUser)
 	proc.POST("create_user", s.createUser)
-	proc.POST("addUserToClass", s.addUserToClass)
+	proc.POST("add_user_to_class", s.addUserToClass)
 
 	proc.POST("printer", s.createPrinter)
 	proc.POST("addPrinterToClass", s.addPrinterToClass)
