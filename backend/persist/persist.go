@@ -67,6 +67,48 @@ func setupTables(db *sql.DB) {
 		panic(fmt.Sprintf("error creating printer table: %v", err))
 	}
 
+	_, err = db.Exec(`
+		create table if not exists classes (
+			id serial primary key,
+			name varchar(255),
+			is_active boolean,
+			unique(name)
+		);`,
+	)
+	if err != nil {
+		panic(fmt.Sprintf("error creating printer table: %v", err))
+	}
+
+	_, err = db.Exec(`
+		create table if not exists class_printers (
+			id serial primary key,
+			class_id integer,
+			printer_id integer,
+			unique(class_id, printer_id),
+
+			constraint fk_class_printers_class foreign key (class_id) references classes(id),
+			constraint fk_class_printers_printer foreign key (printer_id) references printers(id)
+		);`,
+	)
+	if err != nil {
+		panic(fmt.Sprintf("error creating printer table: %v", err))
+	}
+
+	_, err = db.Exec(`
+		create table if not exists class_users (
+			id serial primary key,
+			user_id integer,
+			class_id integer,
+			unique(class_id, user_id),
+
+			constraint fk_class_users_user foreign key (user_id) references users(id),
+			constraint fk_class_users_class foreign key (class_id) references classes(id)
+		);`,
+	)
+	if err != nil {
+		panic(fmt.Sprintf("error creating printer table: %v", err))
+	}
+
 	// _, err = db.Exec(`
 	// 	create table if not exists classes (
 	// 		classId string,
