@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Class } from "../lib/models/Class";
-import { User } from "../lib/models/User";
+import { Professor } from "../lib/models/Professor";
 
 type CreateClassModalProps = {
     isOpen: boolean,
@@ -18,11 +18,19 @@ export const CreateClassModal = ({isOpen, setIsOpen}: CreateClassModalProps) => 
     };
 
     const [formData, setFormData] = useState<Class>(emptyClass);
-    const [professors, setProfessors] = useState<User[]>([]);
+    const [professors, setProfessors] = useState<Professor[]>([]);
+
+    const getAllProfessors = async () => {
+        const response = fetch("http://localhost:3410/protected/list_professors", {
+            method: "GET",
+        });
+
+        setProfessors(await ((await response).json() as Promise<Professor[]>))
+    }
 
     useEffect(() => {
-        
-    }, [])
+        getAllProfessors();
+    }, [isOpen])
 
 
 
@@ -30,7 +38,11 @@ export const CreateClassModal = ({isOpen, setIsOpen}: CreateClassModalProps) => 
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
+        if (name == "professorId") {
+            setFormData((prev) => ({ ...prev, [name]: Number.parseInt(value) }));
+        } else {
+            setFormData((prev) => ({ ...prev, [name]: value }));
+        }
     };
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -86,17 +98,25 @@ export const CreateClassModal = ({isOpen, setIsOpen}: CreateClassModalProps) => 
                                     required
                                 />
                             </div>
-                            <select
-                                id="role"
-                                name="role"
-                                value={}
-                                onChange={handleChange}
-                                className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                            >
-                                {}
-                                <option value="Professor">Professor</option>
-                                <option value="Student">Student</option>
-                            </select>
+                            <div className="mb-4">
+                                <label
+                                    htmlFor="professorId"
+                                    className="block text-sm font-medium text-gray-700"
+                                >
+                                    ProfessorId
+                                </label>
+                                <select
+                                    id="professorId"
+                                    name="professorId"
+                                    value={formData.professorId}
+                                    onChange={handleChange}
+                                    className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                                >
+                                    {professors.map((item, key) => (
+                                        <option value={item.professorId} key={key}>{item.name}</option>
+                                    ))}
+                                </select>
+                            </div>
 
                             <div className="flex justify-end space-x-3">
                                 <button
