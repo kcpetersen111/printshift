@@ -1,5 +1,9 @@
 package api
 
+type ListPrintersRequest struct {
+	ClassId int `json:"classId"`
+}
+
 type UpdatePrinterRequest struct {
 	PrinterId   string `json:"printerId"`
 	Name        string `json:"name"`
@@ -45,7 +49,7 @@ type UserLogin struct {
 }
 
 type AddPrinterToClass struct {
-	ClassId   int `json:"name"`
+	ClassId   int `json:"classId"`
 	PrinterId int `json:"printerId"`
 }
 
