@@ -54,6 +54,7 @@ type CreateClassesRequest struct {
 
 type UpdateClass struct {
 	ClassId     int    `json:"classId"`
+	ProfessorId int    `json:"professorId"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	IsActive    bool   `json:"isActive"`
