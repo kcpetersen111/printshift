@@ -6,13 +6,14 @@ import { AccessLevel, convertToStringAccessLevel } from "../lib/enums/AccessLeve
 
 type CreateUserModalProps = {
     isOpen: boolean,
-    setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
+    setIsOpen: React.Dispatch<React.SetStateAction<boolean>>,
+    access: AccessLevel
 }
 
-export const CreateUserModal = ({isOpen, setIsOpen}: CreateUserModalProps) => {
+export const CreateUserModal = ({isOpen, setIsOpen, access}: CreateUserModalProps) => {
     const emptyUser: User = {
         name: "",
-        accessLevel: AccessLevel.Unknown,
+        accessLevel: AccessLevel.Student,
         email: "",
         password: ""
     };
@@ -112,7 +113,7 @@ export const CreateUserModal = ({isOpen, setIsOpen}: CreateUserModalProps) => {
                                     onChange={handleChange}
                                     className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                                 >
-                                    <option value="Professor">Professor</option>
+                                    {access === AccessLevel.Admin && <option value="Professor">Professor</option>}
                                     <option value="Student">Student</option>
                                 </select>
                             </div>
