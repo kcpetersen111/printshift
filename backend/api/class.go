@@ -12,7 +12,8 @@ func (s *Server) updateClass(c *gin.Context) {
 
 	if err := c.BindJSON(&requestBody); err != nil {
 		slog.Error("error reading request body: %v", err)
-		c.JSON(http.StatusBadRequest, gin.H{"call_failed": true})
+
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err})
 		return
 	}
 
@@ -24,7 +25,8 @@ func (s *Server) updateClass(c *gin.Context) {
 	)
 	if err != nil {
 		slog.Error("error inserting class into db: %v", err)
-		c.JSON(http.StatusBadRequest, mustSet("", "error", "error inserting new printer to db"))
+
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err})
 		return
 	}
 
@@ -36,14 +38,16 @@ func (s *Server) createClass(c *gin.Context) {
 
 	if err := c.BindJSON(&requestBody); err != nil {
 		slog.Error("error reading request body: %v", err)
-		c.JSON(http.StatusBadRequest, gin.H{"call_failed": true})
+
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err})
 		return
 	}
 
 	_, err := s.db.Exec("insert into classes (name, description, is_active) values ($1, $2, $3);", requestBody.Name, requestBody.Description, requestBody.IsActive)
 	if err != nil {
 		slog.Error("error inserting class into db: %v", err)
-		c.JSON(http.StatusBadRequest, mustSet("", "error", "error inserting new printer to db"))
+
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err})
 		return
 	}
 
