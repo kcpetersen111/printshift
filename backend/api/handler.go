@@ -94,6 +94,30 @@ func (s *Server) createUser(c *gin.Context) {
 
 }
 
+type AddPrinterToClass struct {
+	ClassId   int `json:"name"`
+	PrinterId int `json:"active"`
+}
+
+func (s *Server) addPrinterToClass(c *gin.Context) {
+	var requestBody AddPrinterToClass
+
+	if err := c.BindJSON(&requestBody); err != nil {
+		slog.Error("error reading request body: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"call_failed": true})
+		return
+	}
+
+	_, err := s.db.Exec("insert into class_printers (class_id, printer_id) values ($1, $2);", requestBody.ClassId, requestBody.PrinterId)
+	if err != nil {
+		slog.Error("error inserting printers into db: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "can't add printer to class"})
+		return
+	}
+
+	c.JSON(http.StatusCreated, "OK")
+}
+
 type CreatePrinterRequest struct {
 	Name   string `json:"name"`
 	Active bool   `json:"active"`
