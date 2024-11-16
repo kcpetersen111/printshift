@@ -7,6 +7,13 @@ type CreateUserRequest struct {
 	Password    string `json:"password"`
 }
 
+type UpdateUserRequest struct {
+	Name        string `json:"name"`
+	AccessLevel int    `json:"accessLevel,omitempty"`
+	Email       string `json:"email"`
+	Password    string `json:"password"`
+}
+
 type UserLoginResponse struct {
 	Name        string `json:"name"`
 	AccessLevel int    `json:"accessLevel"`

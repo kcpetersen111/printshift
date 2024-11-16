@@ -47,6 +47,7 @@ func (s *Server) register() error {
 
 	proc := s.ginServer.Group("/protected")
 
+	proc.PATCH("update_user", s.updateUser)
 	proc.POST("create_user", s.createUser)
 	proc.POST("addUserToClass", s.addUserToClass)
 

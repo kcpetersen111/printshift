@@ -15,7 +15,7 @@ func (s *Server) createUser(c *gin.Context) {
 	var req CreateUserRequest
 	if err := c.BindJSON(&req); err != nil {
 		slog.Error("error inserting printers into db: %v", err)
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
 	}
 
@@ -31,11 +31,36 @@ func (s *Server) createUser(c *gin.Context) {
 
 }
 
+func (s *Server) updateUser(c *gin.Context) {
+	// add user auth stuff later
+	// auth, _ := c.Get("username")
+	var req UpdateUserRequest
+	if err := c.BindJSON(&req); err != nil {
+		slog.Error("error inserting printers into db: %v", err)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err})
+		return
+	}
+
+	if req.Name == "" || req.Email == "" || req.Password == "" {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "name, email, and password are required"})
+		return
+	}
+
+	_, err := s.db.Exec("update users set email = $1, name = $2, password = $3;", req.Email, req.Name, req.Password)
+	if err != nil {
+		slog.Error("error inserting into db: %v", err)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err})
+		return
+	}
+
+	c.JSON(http.StatusAccepted, "OK")
+}
+
 func (s *Server) listUsers(c *gin.Context) {
 	rows, err := s.db.Query(`select id, email, name, access_level from users;`)
 	if err != nil {
 		slog.Error("error querying db: %v", err)
-		c.JSON(http.StatusBadRequest, mustSet("", "error", "error inserting new printer to db"))
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
 	}
 	users := make([]persist.User, 0)
@@ -43,7 +68,7 @@ func (s *Server) listUsers(c *gin.Context) {
 		var u persist.User
 		if err := rows.Scan(&u.Id, &u.Email, &u.Name, &u.AccessLevel); err != nil {
 			slog.Error("error scanning db: %v", err)
-			c.JSON(http.StatusBadRequest, mustSet("", "error", "error inserting new printer to db"))
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err})
 			return
 		}
 		users = append(users, u)
