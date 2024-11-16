@@ -70,6 +70,7 @@ func (s *Server) register() error {
 	proc.GET("list_professors", s.listProfessors)
 	proc.GET("list_classes", s.listClasses)
 	proc.POST("list_user_classes", s.listClassesForUser)
+	proc.POST("list_class_printers", s.listPrintersForClass)
 
 	proc.Use(authMiddleware())
 	return nil
