@@ -49,6 +49,7 @@ func (s *Server) register() error {
 	proc := s.ginServer.Group("/protected")
 
 	proc.POST("create_user", s.createUser)
+	proc.GET("list_users", s.listUsers)
 
 	proc.Use(authMiddleware())
 	return nil

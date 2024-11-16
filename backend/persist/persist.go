@@ -11,6 +11,14 @@ import (
 	_ "github.com/lib/pq"
 )
 
+type User struct {
+	Id          int    `json:"id"`
+	Email       string `json:"email"`
+	Name        string `json:"name"`
+	AccessLevel int    `json:"access_level"`
+	Password    string `json:"password"`
+}
+
 func setupTables(db *sql.DB) {
 	_, err := db.Exec(`
 		create table if not exists users (
@@ -33,15 +41,9 @@ func setupTables(db *sql.DB) {
 
 	row := db.QueryRow(`select id from users where email = ($1);`, email)
 
-	var user struct {
-		Id          int
-		Email       string
-		Name        string
-		AccessLevel int
-		Password    string
-	}
+	var us User
 
-	switch err := row.Scan(&user.Id); err {
+	switch err := row.Scan(&us.Id); err {
 	case sql.ErrNoRows:
 		_, err = db.Exec(`Insert into users (email, name, access_level, password) values ($1, $2, $3, $4);`, email, name, level, password)
 		if err != nil {
