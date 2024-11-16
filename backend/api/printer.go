@@ -8,6 +8,30 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func (s *Server) updatePrinter(c *gin.Context) {
+	var requestBody UpdatePrinterRequest
+
+	if err := c.BindJSON(&requestBody); err != nil {
+		slog.Error("error reading request body: %v", err)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err})
+		return
+	}
+
+	_, err := s.db.Exec("update printers set name = $1, description = $2, is_active = $3 where name = $4;",
+		requestBody.Name,
+		requestBody.Description,
+		requestBody.IsActive,
+		requestBody.Name,
+	)
+	if err != nil {
+		slog.Error("error updating printer: %v", err)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err})
+		return
+	}
+
+	c.JSON(http.StatusCreated, "OK")
+}
+
 func (s *Server) createPrinter(c *gin.Context) {
 	var requestBody CreatePrinterRequest
 
@@ -25,6 +49,28 @@ func (s *Server) createPrinter(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, "OK")
+}
+
+func (s *Server) listPrinters(c *gin.Context) {
+	rows, err := s.db.Query(`select id, name, description, is_active from printers;`)
+	if err != nil {
+		slog.Error("error querying db: %v", err)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err})
+		return
+	}
+
+	printers := make([]Printer, 0)
+	for rows.Next() {
+		var p Printer
+		if err := rows.Scan(&p.PrinterId, &p.Name, &p.Description, &p.IsActive); err != nil {
+			slog.Error("error scanning db: %v", err)
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err})
+			return
+		}
+		printers = append(printers, p)
+	}
+
+	c.JSON(http.StatusOK, printers)
 }
 
 func (s *Server) bookSpecificPrinter(c *gin.Context) {

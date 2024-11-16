@@ -54,7 +54,7 @@ func (s *Server) register() error {
 
 	proc.POST("printer", s.createPrinter)
 	proc.POST("addPrinterToClass", s.addPrinterToClass)
-	proc.POST("bookPrinter", s.bookPrinter)
+	// proc.POST("bookPrinter", s.bookPrinter)
 	proc.POST("removeUserFromClass", s.removeUserFromClass)
 	proc.POST("bookSpecificPrinter", s.bookSpecificPrinter)
 
@@ -62,9 +62,11 @@ func (s *Server) register() error {
 	proc.POST("createAvailablePrinterTime", s.createAvailablePrinterTime)
 
 	proc.PATCH("class", s.updateClass)
+	proc.PATCH("update_printer", s.updatePrinter)
 	proc.POST("class", s.createClass)
 
 	proc.GET("list_users", s.listUsers)
+	proc.GET("list_printers", s.listPrinters)
 	proc.GET("list_professors", s.listProfessors)
 	proc.GET("list_classes", s.listClasses)
 	proc.POST("list_user_classes", s.listClassesForUser)

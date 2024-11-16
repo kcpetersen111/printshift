@@ -61,7 +61,8 @@ func setupTables(db *sql.DB) {
 	_, err = db.Exec(`
 		create table if not exists printers (
 			id serial primary key,
-			name varchar(255),
+			name varchar(255) not null,
+			description varchar(255) not null default '',
 			is_active boolean,
 			unique(name)
 		);`,

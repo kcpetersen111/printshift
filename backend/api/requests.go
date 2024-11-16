@@ -1,5 +1,19 @@
 package api
 
+type UpdatePrinterRequest struct {
+	PrinterId   string `json:"printerId"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	IsActive    bool   `json:"isActive"`
+}
+
+type Printer struct {
+	PrinterId   string `json:"printerId"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	IsActive    bool   `json:"isActive"`
+}
+
 type CreateUserRequest struct {
 	Name        string `json:"name"`
 	AccessLevel int    `json:"accessLevel"`
