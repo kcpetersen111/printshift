@@ -17,7 +17,7 @@ func setupTables(db *sql.DB) {
 			id serial primary key,
 			email varchar(255) not null,
 			name varchar(255),
-			acces_level integer not null default 1,
+			access_level integer not null default 1,
 			password varchar(255) not null,
 			unique(email)
 		);`,

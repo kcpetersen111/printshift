@@ -43,7 +43,7 @@ func (s *Server) login(c *gin.Context) {
 			return
 		}
 	}
-	if dbPass != pass {
+	if pass != "" || dbPass != pass {
 		time.Sleep(time.Second)
 		c.JSON(http.StatusUnauthorized, "")
 		return
@@ -66,30 +66,31 @@ func (s *Server) login(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "login successful"})
 }
 
+type CreateUserRequest struct {
+	Name     string `json:"name"`
+	Level    int    `json:"level"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
 // still needs the checks to see if this user can create the level of users
 func (s *Server) createUser(c *gin.Context) {
 	// add user auth stuff later
 	// auth, _ := c.Get("username")
-
-	req, err := io.ReadAll(c.Request.Body)
-	if err != nil {
-		slog.Error("error reading request body: %v", err)
-		c.JSON(http.StatusBadRequest, mustSet("", "call_failed", "True"))
+	var req CreateUserRequest
+	if err := c.BindJSON(&req); err != nil {
+		slog.Error("error inserting printers into db: %v", err)
+		c.JSON(http.StatusBadRequest, mustSet("", "error", "error inserting new printer to db"))
 		return
 	}
 
-	name := gjson.GetBytes(req, "name").String()
-	level := gjson.GetBytes(req, "access_level").Int()
-	email := gjson.GetBytes(req, "email").String()
-	password := gjson.GetBytes(req, "password").String()
-
-	_, err = s.db.Exec("insert into users (email, name, access_level, password) values ($1, $2, $3, $4);", email, name, level, password)
+	_, err := s.db.Exec("Insert into users (email, name, access_level, password) values ($1, $2, $3, $4);", req.Email, req.Name, req.Level, req.Password)
 	if err != nil {
 		slog.Error("error inserting into db: %v", err)
 		c.JSON(http.StatusBadRequest, mustSet("", "error", "error inserting new user to db"))
 		return
 	}
-	slog.Info("successfully created user: %v", email)
+	slog.Info("successfully created user: %v", req.Email)
 	c.JSON(http.StatusCreated, "OK")
 
 }
@@ -116,5 +117,4 @@ func (s *Server) createPrinter(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, "OK")
-
 }
