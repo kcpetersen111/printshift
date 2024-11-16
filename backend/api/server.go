@@ -17,7 +17,7 @@ type Server struct {
 	db        *sql.DB
 }
 
-var secretKey = []byte("your-secret-key")
+var secretKey = []byte("eW91ci1zZWNyZXQta2V5")
 
 func NewServer(db *sql.DB) Server {
 	gs := gin.Default()
