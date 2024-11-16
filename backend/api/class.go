@@ -48,10 +48,40 @@ func (s *Server) updateClass(c *gin.Context) {
 		requestBody.ClassId,
 	)
 	if err != nil {
-		slog.Error("error inserting class into db: %v", err)
+		slog.Error("error updating class: %v", err)
 
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
+	}
+
+	// attach professor if applicable
+	if requestBody.ProfessorId != -1 {
+		rows, err := s.db.Query(`select id from classes where name = $1;`, requestBody.Name)
+		if err != nil {
+			slog.Error("error querying db: %v", err)
+
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err})
+			return
+		}
+
+		var class Class
+		for rows.Next() {
+			if err := rows.Scan(&class.Id); err != nil {
+				slog.Error("error scanning db: %v", err)
+
+				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err})
+				return
+			}
+			break
+		}
+
+		_, err = s.db.Exec("insert into class_users (user_id, class_id) values ($1, $2);", requestBody.ProfessorId, class.Id)
+		if err != nil {
+			slog.Error("error inserting class into db: %v", err)
+
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err})
+			return
+		}
 	}
 
 	c.JSON(http.StatusAccepted, "OK")
