@@ -90,6 +90,31 @@ func (s *Server) createUser(c *gin.Context) {
 		return
 	}
 	slog.Info("successfully created user: %v", email)
-	c.JSON(http.StatusCreated, "")
+	c.JSON(http.StatusCreated, "OK")
+
+}
+
+type CreatePrinterRequest struct {
+	Name   string `json:"name"`
+	Active bool   `json:"active"`
+}
+
+func (s *Server) createPrinter(c *gin.Context) {
+	var requestBody CreatePrinterRequest
+
+	if err := c.BindJSON(&requestBody); err != nil {
+		slog.Error("error reading request body: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"call_failed": true})
+		return
+	}
+
+	_, err := s.db.Exec("insert into printers (name, is_active) values ($1, $2);", requestBody.Name, requestBody.Active)
+	if err != nil {
+		slog.Error("error inserting printers into db: %v", err)
+		c.JSON(http.StatusBadRequest, mustSet("", "error", "error inserting new printer to db"))
+		return
+	}
+
+	c.JSON(http.StatusCreated, "OK")
 
 }

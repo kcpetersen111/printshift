@@ -55,6 +55,18 @@ func setupTables(db *sql.DB) {
 		panic(err)
 	}
 
+	_, err = db.Exec(`
+		create table if not exists printers (
+			id serial primary key,
+			name varchar(255),
+			is_active boolean,
+			unique(name)
+		);`,
+	)
+	if err != nil {
+		panic(fmt.Sprintf("error creating printer table: %v", err))
+	}
+
 	// _, err = db.Exec(`
 	// 	create table if not exists classes (
 	// 		classId string,

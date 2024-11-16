@@ -33,6 +33,7 @@ func (s *Server) register() error {
 
 	s.ginServer.GET("ping", s.ping)
 	s.ginServer.GET("login", s.login)
+	s.ginServer.POST("printer", s.createPrinter)
 
 	proc := s.ginServer.Group("/protected")
 
