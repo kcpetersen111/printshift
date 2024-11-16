@@ -35,14 +35,22 @@ export const CreateUserModal = ({hidden, setIsHidden}: CreateUserModalProps) => 
     const onSubmit = () => {
         const user: User = {
             name: firstName + " " + lastName,
-            accessLevel: convertToDbAccessLevel(accessLevel),
+            access_level: convertToDbAccessLevel(accessLevel),
             email: email,
-            classes: classes,
-            printers: printers,
-            printersCanAssign: printersCanAssign
+            // classes: classes,
+            // printers: printers,
+            // printersCanAssign: printersCanAssign
+            password: "password"
         };
 
         // TODO: API Call CreateUser
+        const createUserResponse = fetch("http://localhost:3410/protected/create_user", {
+            method: "POST",
+            body: JSON.stringify(user)
+        });
+
+        console.log(createUserResponse);
+
         setIsHidden(false);
     }
 

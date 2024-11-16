@@ -16,13 +16,13 @@ export const ManagementPanel = ({user}: ManagementPanelProps) => {
             case AccessLevel.Student:
                 return "Student";
             default:
-                throw new Error("Access Level unrecognized: " + user.accessLevel);            
+                throw new Error("Access Level unrecognized: " + user.access_level);            
         }
     }
 
     return (
         <div className="w-fit">
-            <h1 className="text-8xl mt-10">{convertToStringAccessLevel(user.accessLevel)} Panel</h1>
+            <h1 className="text-8xl mt-10">{convertToStringAccessLevel(user.access_level)} Panel</h1>
             <AdminPanel user={user} />
         </div>
     );
