@@ -43,13 +43,12 @@ func NewServer(db *sql.DB) Server {
 func (s *Server) register() error {
 
 	s.ginServer.GET("ping", s.ping)
-	s.ginServer.GET("login", s.login)
-
-	// todo protect these
-	s.ginServer.POST("printer", s.createPrinter)
-	s.ginServer.POST("classPrinter", s.addPrinterToClass)
+	s.ginServer.POST("login", s.login)
 
 	proc := s.ginServer.Group("/protected")
+
+	proc.POST("printer", s.createPrinter)
+	proc.POST("classPrinter", s.addPrinterToClass)
 
 	proc.POST("create_user", s.createUser)
 	proc.GET("list_users", s.listUsers)
