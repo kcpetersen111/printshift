@@ -16,7 +16,7 @@ func (s *Server) createPrinter(c *gin.Context) {
 		return
 	}
 
-	_, err := s.db.Exec("insert into printers (name, is_active) values ($1, $2);", requestBody.Name, requestBody.Active)
+	_, err := s.db.Exec("insert into printers (name, is_active) values ($1, $2);", requestBody.Name, requestBody.IsActive)
 	if err != nil {
 		slog.Error("error inserting printers into db: %v", err)
 		c.JSON(http.StatusBadRequest, mustSet("", "error", "error inserting new printer to db"))
