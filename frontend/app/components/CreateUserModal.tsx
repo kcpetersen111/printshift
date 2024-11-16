@@ -2,17 +2,18 @@
 
 import { useState } from "react";
 import { User } from "../lib/models/User";
-import { AccessLevel, convertToStringAccessLevel } from "../lib/enums/AccessLevel";
+import { AccessLevel } from "../lib/enums/AccessLevel";
 
 type CreateUserModalProps = {
-    isOpen: boolean;
-    setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-};
+    isOpen: boolean,
+    setIsOpen: React.Dispatch<React.SetStateAction<boolean>>,
+    access: AccessLevel
+}
 
-export const CreateUserModal = ({ isOpen, setIsOpen }: CreateUserModalProps) => {
+export const CreateUserModal = ({isOpen, setIsOpen, access}: CreateUserModalProps) => {
     const emptyUser: User = {
         name: "",
-        accessLevel: AccessLevel.Unknown,
+        accessLevel: AccessLevel.Student,
         email: "",
         password: ""
     };
@@ -23,7 +24,12 @@ export const CreateUserModal = ({ isOpen, setIsOpen }: CreateUserModalProps) => 
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
+        if (name == "accessLevel") {
+            const accessValue = Number.parseInt(value) as AccessLevel;
+            setFormData((prev) => ({ ...prev, [name]: accessValue }));
+        } else {
+            setFormData((prev) => ({ ...prev, [name]: value }));
+        }
     };
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -100,20 +106,20 @@ export const CreateUserModal = ({ isOpen, setIsOpen }: CreateUserModalProps) => 
 
                             <div className="mb-4">
                                 <label
-                                    htmlFor="role"
-                                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                    htmlFor="accessLevel"
+                                    className="block text-sm font-medium text-gray-700"
                                 >
                                     Role
                                 </label>
                                 <select
-                                    id="role"
-                                    name="role"
-                                    value={formData.accessLevel && convertToStringAccessLevel(formData.accessLevel)}
+                                    id="accessLevel"
+                                    name="accessLevel"
+                                    value={formData.accessLevel}
                                     onChange={handleChange}
                                     className="w-full mt-1 p-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 >
-                                    <option value="Professor">Professor</option>
-                                    <option value="Student">Student</option>
+                                    {access === AccessLevel.Admin && <option value={AccessLevel.Professor}>Professor</option>}
+                                    <option value={AccessLevel.Student}>Student</option>
                                 </select>
                             </div>
 

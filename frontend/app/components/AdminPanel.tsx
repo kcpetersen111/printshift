@@ -26,7 +26,7 @@ export const AdminPanel = ({ user }: AdminPanelProps) => {
                         <span className="text-left">Create New User</span>
                         <span className="text-right">&gt;</span>
                     </button>
-                    <CreateUserModal isOpen={openCreateUserModal} setIsOpen={setOpenCreateUserModal} />
+                    <CreateUserModal isOpen={openCreateUserModal} setIsOpen={setOpenCreateUserModal} access={AccessLevel.Admin}/>
                 </div>
 
                 {/* Row 2: Manage Printers */}
