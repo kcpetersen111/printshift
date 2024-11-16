@@ -47,10 +47,19 @@ func (s *Server) register() error {
 
 	proc := s.ginServer.Group("/protected")
 
-	proc.POST("printer", s.createPrinter)
-	proc.POST("classPrinter", s.addPrinterToClass)
-
 	proc.POST("create_user", s.createUser)
+	proc.POST("addUserToClass", s.addUserToClass)
+
+	proc.POST("printer", s.createPrinter)
+	proc.POST("addPrinterToClass", s.addPrinterToClass)
+	proc.POST("removeUserFromClass", s.removeUserFromClass)
+	proc.POST("bookPrinter", s.bookPrinter)
+
+	proc.POST("createAvailableTime", s.createAvailableTime)
+
+	proc.PATCH("class", s.updateClass)
+	proc.POST("class", s.createClass)
+
 	proc.GET("list_users", s.listUsers)
 
 	proc.Use(authMiddleware())
