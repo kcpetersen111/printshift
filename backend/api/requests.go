@@ -79,17 +79,23 @@ type AddPrinterTime struct {
 	TimeslotId int `json:"timeslotId"`
 }
 
-type BookPrinter struct {
+type BookSpecificPrinter struct {
 	UserId    int `json:"userId"`
 	StartTime int `json:"startTime"`
 	EndTime   int `json:"endTime"`
 	PrinterId int `json:"printerId"`
 }
 
-type CreateAvailableTime struct {
+type CreateAvailableClassTime struct {
 	StartTime int `json:"startTime"`
 	EndTime   int `json:"endTime"`
 	ClassId   int `json:"classId"`
+}
+
+type CreateAvailablePrinterTime struct {
+	StartTime int `json:"startTime"`
+	EndTime   int `json:"endTime"`
+	PrinterId int `json:"printerId"`
 }
 
 type Class struct {
