@@ -66,8 +66,8 @@ func (s *Server) ping(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-func (s *Server) createAvailableTime(c *gin.Context) {
-	var requestBody CreateAvailableTime
+func (s *Server) createAvailableClassTime(c *gin.Context) {
+	var requestBody CreateAvailableClassTime
 
 	if err := c.BindJSON(&requestBody); err != nil {
 		slog.Error("error reading request body: %v", err)
@@ -75,10 +75,33 @@ func (s *Server) createAvailableTime(c *gin.Context) {
 		return
 	}
 
-	_, err := s.db.Exec("insert into available_times (start_time, end_time, class_id) values ($1, $2, $3);",
+	_, err := s.db.Exec("insert into class_times (start_time, end_time, class_id) values ($1, $2, $3);",
 		requestBody.StartTime,
 		requestBody.EndTime,
 		requestBody.ClassId,
+	)
+	if err != nil {
+		slog.Error("error creating available time: %v", err)
+		c.JSON(http.StatusBadRequest, mustSet("", "error", "can't create available time"))
+		return
+	}
+
+	c.JSON(http.StatusCreated, "OK")
+}
+
+func (s *Server) createAvailablePrinterTime(c *gin.Context) {
+	var requestBody CreateAvailablePrinterTime
+
+	if err := c.BindJSON(&requestBody); err != nil {
+		slog.Error("error reading request body: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"call_failed": true})
+		return
+	}
+
+	_, err := s.db.Exec("insert into printer_times (start_time, end_time, printer_id) values ($1, $2, $3);",
+		requestBody.StartTime,
+		requestBody.EndTime,
+		requestBody.PrinterId,
 	)
 	if err != nil {
 		slog.Error("error creating available time: %v", err)

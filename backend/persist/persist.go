@@ -113,18 +113,42 @@ func setupTables(db *sql.DB) {
 		panic(fmt.Sprintf("error creating printer table: %v", err))
 	}
 
-	// _, err = db.Exec(`
-	// 	create table if not exists classes (
-	// 		classId string,
-	// 		professor string,
-	// 		name string,
+	_, err = db.Exec(`
+		create table if not exists class_times(
+			id serial primary key,
+			class_id integer,
+			start_time timestamp,
+			end_time timestamp
+		);`,
+	)
+	if err != nil {
+		panic(fmt.Sprintf("error creating class_times table: %v", err))
+	}
 
-	// 	);`,
-	// )
-	// if err != nil {
-	// 	panic(fmt.Sprintf("error creating test table: %v", err))
-	// }
+	_, err = db.Exec(`
+		create table if not exists printer_times (
+			id serial primary key,
+			printer_id integer,
+			start_time timestamp,
+			end_time timestamp
+		);`,
+	)
+	if err != nil {
+		panic(fmt.Sprintf("error creating printers table: %v", err))
+	}
 
+	_, err = db.Exec(`
+		create table if not exists user_bookings(
+			id serial primary key,
+			user_id integer,
+			printer_id integer,
+			start_time timestamp,
+			end_time timestamp
+		);`,
+	)
+	if err != nil {
+		panic(fmt.Sprintf("error creating printers table: %v", err))
+	}
 }
 
 func NewDB() *sql.DB {
