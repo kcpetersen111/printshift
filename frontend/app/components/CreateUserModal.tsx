@@ -2,11 +2,22 @@
 
 import { useState } from "react";
 import { User } from "../lib/models/User";
-import { convertToStringAccessLevel } from "../lib/enums/AccessLevel";
+import { AccessLevel, convertToStringAccessLevel } from "../lib/enums/AccessLevel";
 
-export const CreateUserModal = () => {
-    const [isOpen, setIsOpen] = useState(false);
-    const [formData, setFormData] = useState<User>({} as User); 
+type CreateUserModalProps = {
+    isOpen: boolean,
+    setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+export const CreateUserModal = ({isOpen, setIsOpen}: CreateUserModalProps) => {
+    const emptyUser: User = {
+        name: "",
+        accessLevel: AccessLevel.Unknown,
+        email: "",
+        password: ""
+    };
+
+    const [formData, setFormData] = useState<User>(emptyUser); 
 
     const toggleModal = () => setIsOpen(!isOpen);
 
@@ -27,14 +38,7 @@ export const CreateUserModal = () => {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center h-screen bg-gray-50">
-            <button
-                onClick={toggleModal}
-                className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
-            >
-                Open Form
-            </button>
-
+        <div>
             {isOpen && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                     <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-lg">
@@ -104,7 +108,7 @@ export const CreateUserModal = () => {
                                 <select
                                     id="role"
                                     name="role"
-                                    value={convertToStringAccessLevel(formData.accessLevel)}
+                                    value={formData.accessLevel && convertToStringAccessLevel(formData.accessLevel)}
                                     onChange={handleChange}
                                     className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                                 >
@@ -115,17 +119,18 @@ export const CreateUserModal = () => {
 
                             <div className="flex justify-end space-x-3">
                                 <button
-                                type="button"
-                                onClick={toggleModal}
-                                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                                    type="button"
+                                    onClick={toggleModal}
+                                    className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
                                 >
-                                Close
+                                    Close
                                 </button>
                                 <button
-                                type="submit"
-                                className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
+                                    type="submit"
+                                    className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
+                                    onClick={handleSubmit}
                                 >
-                                Submit
+                                    Submit
                                 </button>
                             </div>
                         </form>
@@ -133,7 +138,7 @@ export const CreateUserModal = () => {
                 </div>
             )}
         </div>
-    )
+    );
 }
 
 // import React, { useState } from "react";
