@@ -9,6 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
+	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
 )
 
@@ -19,24 +20,17 @@ func (s *Server) ping(c *gin.Context) {
 
 // do better user auth not unencrypted password comparison
 func (s *Server) login(c *gin.Context) {
-	// req, err := io.ReadAll(c.Request.Body)
-	// if err != nil {
-	// 	slog.Error("error reading request body: %v", err)
-	// 	c.JSON(http.StatusBadRequest, mustSet("", "call_failed", "True"))
-	// 	return
-	// }
-	// email := gjson.GetBytes(req, "email").String()
-	// pass := gjson.GetBytes(req, "password").String()
 
-	var requestBody UserLogin
-
-	if err := c.BindJSON(&requestBody); err != nil {
+	req, err := io.ReadAll(c.Request.Body)
+	if err != nil {
 		slog.Error("error reading request body: %v", err)
-		c.JSON(http.StatusBadRequest, gin.H{"call_failed": true})
+		c.JSON(http.StatusBadRequest, mustSet("", "call_failed", "True"))
 		return
 	}
+	email := gjson.GetBytes(req, "email").String()
+	pass := gjson.GetBytes(req, "password").String()
 
-	rows, err := s.db.Query("select password from users where email = $1;", requestBody.Email)
+	rows, err := s.db.Query("select password from users where email = $1;", email)
 	if err != nil {
 		slog.Error("error querying db: %v", err)
 		c.JSON(http.StatusBadRequest, mustSet("", "call_failed", "True"))
@@ -50,8 +44,7 @@ func (s *Server) login(c *gin.Context) {
 			return
 		}
 	}
-	if requestBody.Password == "" || dbPass != requestBody.Password {
-		slog.Error("email %s with password '%s' not found", requestBody.Email, requestBody.Password)
+	if pass != "" || dbPass != pass {
 		time.Sleep(time.Second)
 		c.JSON(http.StatusUnauthorized, "")
 		return
@@ -59,8 +52,8 @@ func (s *Server) login(c *gin.Context) {
 
 	// Set the JWT token.
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"username": requestBody.Email,
-		"exp":      time.Now().Add(1 * time.Hour).Unix(), // 1 hour expiration
+		"username": email,
+		"exp":      time.Now().Add(24 * time.Hour).Unix(), // 1-day expiration
 	})
 
 	tokenString, err := token.SignedString(secretKey)
@@ -70,7 +63,7 @@ func (s *Server) login(c *gin.Context) {
 	}
 
 	// Set the JWT in a cookie.
-	c.SetCookie("auth_token", tokenString, 60*60, "/", "localhost", false, true)
+	c.SetCookie("auth_token", tokenString, 3600*24, "/", "localhost", false, true)
 	c.JSON(http.StatusOK, gin.H{"message": "login successful"})
 }
 
@@ -96,48 +89,6 @@ func (s *Server) createUser(c *gin.Context) {
 
 }
 
-func (s *Server) addUserToClass(c *gin.Context) {
-	var requestBody AddUserToClass
-
-	if err := c.BindJSON(&requestBody); err != nil {
-		slog.Error("error reading request body: %v", err)
-		c.JSON(http.StatusBadRequest, gin.H{"call_failed": true})
-		return
-	}
-
-	_, err := s.db.Exec("insert into class_users (user_id, printer_id) values ($1, $2);", requestBody.UserId, requestBody.ClassId)
-	if err != nil {
-		slog.Error("error adding user to class: %v", err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": "can't add user to class"})
-		return
-	}
-
-	c.JSON(http.StatusCreated, "OK")
-}
-
-func (s *Server) removeUserFromClass(c *gin.Context) {
-	var requestBody RemoveUserFromClass
-
-	if err := c.BindJSON(&requestBody); err != nil {
-		slog.Error("error reading request body: %v", err)
-		c.JSON(http.StatusBadRequest, gin.H{"call_failed": true})
-		return
-	}
-
-	_, err := s.db.Exec("delete from class_users where class_id = $1 and user_id = $2",
-		requestBody.UserId,
-		requestBody.ClassId,
-	)
-
-	if err != nil {
-		slog.Error("error adding user to class: %v", err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": "can't add user to class"})
-		return
-	}
-
-	c.JSON(http.StatusCreated, "OK")
-}
-
 func (s *Server) addPrinterToClass(c *gin.Context) {
 	var requestBody AddPrinterToClass
 
@@ -149,7 +100,7 @@ func (s *Server) addPrinterToClass(c *gin.Context) {
 
 	_, err := s.db.Exec("insert into class_printers (class_id, printer_id) values ($1, $2);", requestBody.ClassId, requestBody.PrinterId)
 	if err != nil {
-		slog.Error("error adding printer to class: %v", err)
+		slog.Error("error inserting printers into db: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "can't add printer to class"})
 		return
 	}
@@ -198,30 +149,6 @@ func (s *Server) createPrinter(c *gin.Context) {
 	c.JSON(http.StatusCreated, "OK")
 }
 
-func (s *Server) updateClass(c *gin.Context) {
-	var requestBody UpdateClass
-
-	if err := c.BindJSON(&requestBody); err != nil {
-		slog.Error("error reading request body: %v", err)
-		c.JSON(http.StatusBadRequest, gin.H{"call_failed": true})
-		return
-	}
-
-	_, err := s.db.Exec("update classes set name = $1, description = $2, is_active = $3 where id = $4",
-		requestBody.Class.Name,
-		requestBody.Class.Description,
-		requestBody.Class.Active,
-		requestBody.ClassId,
-	)
-	if err != nil {
-		slog.Error("error inserting class into db: %v", err)
-		c.JSON(http.StatusBadRequest, mustSet("", "error", "error inserting new printer to db"))
-		return
-	}
-
-	c.JSON(http.StatusCreated, "OK")
-}
-
 func (s *Server) createClass(c *gin.Context) {
 	var requestBody CreateClassesRequest
 
@@ -233,55 +160,8 @@ func (s *Server) createClass(c *gin.Context) {
 
 	_, err := s.db.Exec("insert into classes (name, description, is_active) values ($1, $2, $3);", requestBody.Name, requestBody.Description, requestBody.Active)
 	if err != nil {
-		slog.Error("error inserting class into db: %v", err)
+		slog.Error("error inserting printers into db: %v", err)
 		c.JSON(http.StatusBadRequest, mustSet("", "error", "error inserting new printer to db"))
-		return
-	}
-
-	c.JSON(http.StatusCreated, "OK")
-}
-
-func (s *Server) bookPrinter(c *gin.Context) {
-	var requestBody BookPrinter
-
-	if err := c.BindJSON(&requestBody); err != nil {
-		slog.Error("error reading request body: %v", err)
-		c.JSON(http.StatusBadRequest, gin.H{"call_failed": true})
-		return
-	}
-
-	_, err := s.db.Exec("insert into user_bookings (user_id, start_time, end_time, printer_id) values ($1, $2, $3, $4);",
-		requestBody.UserId,
-		requestBody.StartTime,
-		requestBody.EndTime,
-		requestBody.PrinterId,
-	)
-	if err != nil {
-		slog.Error("error creating booking: %v", err)
-		c.JSON(http.StatusBadRequest, mustSet("", "error", "can't create booking"))
-		return
-	}
-
-	c.JSON(http.StatusCreated, "OK")
-}
-
-func (s *Server) createAvailableTime(c *gin.Context) {
-	var requestBody CreateAvailableTime
-
-	if err := c.BindJSON(&requestBody); err != nil {
-		slog.Error("error reading request body: %v", err)
-		c.JSON(http.StatusBadRequest, gin.H{"call_failed": true})
-		return
-	}
-
-	_, err := s.db.Exec("insert into available_times (start_time, end_time, class_id) values ($1, $2, $3);",
-		requestBody.StartTime,
-		requestBody.EndTime,
-		requestBody.ClassId,
-	)
-	if err != nil {
-		slog.Error("error creating available time: %v", err)
-		c.JSON(http.StatusBadRequest, mustSet("", "error", "can't create available time"))
 		return
 	}
 

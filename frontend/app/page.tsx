@@ -4,11 +4,12 @@ import { ManagementPanel } from "./components/ManagementPanel";
 import { AccessLevel } from "./lib/enums/AccessLevel";
 import { User } from "./lib/models/User";
 import { LoginRequest } from "./lib/models/LoginRequest";
+import { CreateUserResponse } from "./lib/models/CreateUserResponse";
 
 export default function Home() {
     const [currentUser, setCurrentUser] = useState<User | null>(null);
 
-    const login = (email: string, password: string) => {
+    const login = async (email: string, password: string) => {
         const loginRequest: LoginRequest = {
             email,
 			password
@@ -17,22 +18,27 @@ export default function Home() {
 		const response = fetch("http://localhost:3410/login", {
             method: "POST",
             body: JSON.stringify(loginRequest)
-        });
+        }).json() as Promise<CreateUserResponse>;
 
-		console.log(response);
+		if ((await response)) {
+			setCurrentUser((await response).user);
+		} else {
+			throw new Error("Unknown error: User not authenticated.");
+		}
+		
     };
     
     // Creates a test user
     
-	const user: User = {
-		name: "Admin Dummy User",
-		access_level: AccessLevel.Admin,
-		email: "dummy@user.com",
-		// classes: [],
-		// printers: [],
-		// printersCanAssign: 1000
-		password: "pass"
-	};
+	// const user: User = {
+	// 	name: "Admin Dummy User",
+	// 	access_level: AccessLevel.Admin,
+	// 	email: "dummy@user.com",
+	// 	// classes: [],
+	// 	// printers: [],
+	// 	// printersCanAssign: 1000
+	// 	password: "pass"
+	// };
     
     //For the admin panel
 
