@@ -7,6 +7,30 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func (s *Server) listClasses(c *gin.Context) {
+	rows, err := s.db.Query(`select id, name, description, is_active from classes;`)
+	if err != nil {
+		slog.Error("error querying db: %v", err)
+
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err})
+		return
+	}
+	classes := make([]Class, 0)
+	for rows.Next() {
+		var cl Class
+		if err := rows.Scan(&cl.Id, &cl.Name, &cl.Description, &cl.IsActive); err != nil {
+			slog.Error("error scanning db: %v", err)
+
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err})
+			return
+		}
+
+		classes = append(classes, cl)
+	}
+
+	c.JSON(http.StatusOK, classes)
+}
+
 func (s *Server) updateClass(c *gin.Context) {
 	var requestBody UpdateClass
 
