@@ -73,7 +73,8 @@ type CreateAvailableTime struct {
 }
 
 type Class struct {
-	Id       string `json:"id"`
-	Name     string `json:"name"`
-	IsActive string `json:"isActive"`
+	Id          string `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	IsActive    string `json:"isActive"`
 }

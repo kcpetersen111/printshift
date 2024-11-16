@@ -15,16 +15,17 @@ func (s *Server) createUser(c *gin.Context) {
 	var req CreateUserRequest
 	if err := c.BindJSON(&req); err != nil {
 		slog.Error("error inserting printers into db: %v", err)
-		c.JSON(http.StatusBadRequest, mustSet("", "error", "error inserting new printer to db"))
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err})
 		return
 	}
 
 	_, err := s.db.Exec("Insert into users (email, name, access_level, password) values ($1, $2, $3, $4);", req.Email, req.Name, req.AccessLevel, req.Password)
 	if err != nil {
 		slog.Error("error inserting into db: %v", err)
-		c.JSON(http.StatusBadRequest, mustSet("", "error", "error inserting new user to db"))
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
 	}
+
 	slog.Info("successfully created user: %v", req.Email)
 	c.JSON(http.StatusCreated, "OK")
 
