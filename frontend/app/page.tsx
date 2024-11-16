@@ -1,10 +1,8 @@
 "use client";
 import { useState } from "react";
 import { ManagementPanel } from "./components/ManagementPanel";
-import { AccessLevel } from "./lib/enums/AccessLevel";
 import { User } from "./lib/models/User";
 import { LoginRequest } from "./lib/models/LoginRequest";
-import { CreateUserResponse } from "./lib/models/CreateUserResponse";
 
 export default function Home() {
     const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -18,39 +16,19 @@ export default function Home() {
 		const response = fetch("http://localhost:3410/login", {
             method: "POST",
             body: JSON.stringify(loginRequest)
-        }).json() as Promise<CreateUserResponse>;
+        });
 
 		if ((await response)) {
-			setCurrentUser((await response).user);
+			setCurrentUser((await ((await response).json() as Promise<User>)));
 		} else {
 			throw new Error("Unknown error: User not authenticated.");
 		}
 		
     };
-    
-    // Creates a test user
-    
-	// const user: User = {
-	// 	name: "Admin Dummy User",
-	// 	access_level: AccessLevel.Admin,
-	// 	email: "dummy@user.com",
-	// 	// classes: [],
-	// 	// printers: [],
-	// 	// printersCanAssign: 1000
-	// 	password: "pass"
-	// };
-    
-    //For the admin panel
-
-	// return (
-	// 	<div className="flex flex-col items-center">
-	// 		<ManagementPanel user={user} />
-	// 	</div>
-	// );
 
     return (
         <div className="flex flex-col items-center">
-            <h1 className="text-4xl mb-6">Login</h1>
+            <h1 hidden={currentUser !== null} className="text-4xl mb-6">Login</h1>
 
             {/* User Creation Form */}
             <form
@@ -63,6 +41,7 @@ export default function Home() {
                     form.reset();
                 }}
                 className="mb-6"
+				hidden={currentUser !== null}
             >
                 <div className="mb-4">
                     <label className="block text-lg">Email:</label>
