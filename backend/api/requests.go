@@ -1,10 +1,16 @@
 package api
 
 type CreateUserRequest struct {
-	Name     string `json:"name"`
-	Level    int    `json:"level"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Name        string `json:"name"`
+	AccessLevel int    `json:"access_level"`
+	Email       string `json:"email"`
+	Password    string `json:"password"`
+}
+
+type UserLoginResponse struct {
+	Name        string `json:"name"`
+	AccessLevel int    `json:"access_level"`
+	Email       string `json:"email"`
 }
 
 type UserLogin struct {
