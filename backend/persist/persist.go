@@ -17,7 +17,7 @@ func setupTables(db *sql.DB) {
 			id serial primary key,
 			email varchar(255) not null,
 			name varchar(255),
-			accessLevel integer not null default 1,
+			acces_level integer not null default 1,
 			password varchar(255) not null,
 			unique(email)
 		);`,
@@ -43,7 +43,7 @@ func setupTables(db *sql.DB) {
 
 	switch err := row.Scan(&user.Id); err {
 	case sql.ErrNoRows:
-		_, err = db.Exec(`Insert into users (email, name, accessLevel, password) values ($1, $2, $3, $4);`, email, name, level, password)
+		_, err = db.Exec(`Insert into users (email, name, access_level, password) values ($1, $2, $3, $4);`, email, name, level, password)
 		if err != nil {
 			panic(fmt.Sprintf("error inserting into db: %v", err))
 		}
