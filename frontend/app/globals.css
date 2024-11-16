@@ -29,3 +29,7 @@ body {
 button {
   color: var(--button-text);
 }
+
+a {
+    @apply text-xl;
+}
