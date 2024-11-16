@@ -66,13 +66,6 @@ func (s *Server) login(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "login successful"})
 }
 
-type CreateUserRequest struct {
-	Name     string `json:"name"`
-	Level    int    `json:"level"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
 // still needs the checks to see if this user can create the level of users
 func (s *Server) createUser(c *gin.Context) {
 	// add user auth stuff later
@@ -95,11 +88,6 @@ func (s *Server) createUser(c *gin.Context) {
 
 }
 
-type AddPrinterToClass struct {
-	ClassId   int `json:"name"`
-	PrinterId int `json:"active"`
-}
-
 func (s *Server) addPrinterToClass(c *gin.Context) {
 	var requestBody AddPrinterToClass
 
@@ -119,11 +107,6 @@ func (s *Server) addPrinterToClass(c *gin.Context) {
 	c.JSON(http.StatusCreated, "OK")
 }
 
-type CreatePrinterRequest struct {
-	Name   string `json:"name"`
-	Active bool   `json:"active"`
-}
-
 func (s *Server) createPrinter(c *gin.Context) {
 	var requestBody CreatePrinterRequest
 
@@ -134,6 +117,25 @@ func (s *Server) createPrinter(c *gin.Context) {
 	}
 
 	_, err := s.db.Exec("insert into printers (name, is_active) values ($1, $2);", requestBody.Name, requestBody.Active)
+	if err != nil {
+		slog.Error("error inserting printers into db: %v", err)
+		c.JSON(http.StatusBadRequest, mustSet("", "error", "error inserting new printer to db"))
+		return
+	}
+
+	c.JSON(http.StatusCreated, "OK")
+}
+
+func (s *Server) createClass(c *gin.Context) {
+	var requestBody CreateClassesRequest
+
+	if err := c.BindJSON(&requestBody); err != nil {
+		slog.Error("error reading request body: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"call_failed": true})
+		return
+	}
+
+	_, err := s.db.Exec("insert into classes (name, description, is_active) values ($1, $2, $3);", requestBody.Name, requestBody.Description, requestBody.Active)
 	if err != nil {
 		slog.Error("error inserting printers into db: %v", err)
 		c.JSON(http.StatusBadRequest, mustSet("", "error", "error inserting new printer to db"))
